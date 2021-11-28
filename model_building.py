@@ -97,6 +97,7 @@ import pickle
 pickl = {'model': gs.best_estimator_}
 pickle.dump( pickl, open( 'model_file' + ".p", "wb" ))
 
+
 #test model
 file_name = "model_file.p"
 with open(file_name, 'rb') as pickled:
@@ -105,6 +106,7 @@ with open(file_name, 'rb') as pickled:
 
 model.predict(X_test.iloc[1,:].values.reshape(1, -1))
 X_test.iloc[1,:].values
+
 
 #how to convert new data to data dummies
 columns_model = df_model.columns.drop('avg_salary')

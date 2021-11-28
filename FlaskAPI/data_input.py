@@ -53,9 +53,12 @@ columns_dummies = ['Rating', 'comp_count', 'per_hour', 'employer_provided', 'age
                    'title_simp_data scientist', 'title_simp_director', 'title_simp_manager', 'title_simp_mle', 'title_simp_na',
                    'seniority_jr', 'seniority_na', 'seniority_senior']
 
+
+#example input data
 newdata = [[3.8,'501 to 1000 employees','Company - Private','Aerospace & Defense',
             'Aerospace & Defense','$50 to $100 million (USD)',0,0,0,48,1,0,0,0,1,'data scientist','na']]
 
+#convert new data to dummy data
 data_df = pd.DataFrame(newdata, columns=columns_model)
 data_dummies = data_df.reindex(labels = columns_dummies, axis = 1, fill_value = 0).drop(columns='avg_salary').values
 data_in = data_dummies.tolist()
