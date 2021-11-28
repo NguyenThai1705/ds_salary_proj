@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html >
+<!--From https://codepen.io/frytyler/pen/EGdtg-->
+<head>
+  <meta charset="UTF-8">
+  <title>ML API</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+  
+</head>
+
+<body>
+ <div class="login">
+	<h1>Predict Salary of Data Scientist on Glassdoor</h1>
+
+     <!-- Main Input For Receiving Query to our ML -->
+    <form action="{{ url_for('predict')}}"method="post">
+        <label for="rating">Rating (-1 is null, or from 0 to 5):</label>
+    	<input type="text" name="rating" placeholder="rating" required="required" />
+    	<br><br>
+
+    	<label for="size">Choose a size:</label>
+        <select name="size" id="size">
+          <option value="1 to 50 employees">1 to 50 employees</option>
+          <option value="51 to 200 employees">51 to 200 employees</option>
+          <option value="201 to 500 employees">201 to 500 employees</option>
+          <option value="501 to 1000 employees">501 to 1000 employees</option>
+          <option value="1001 to 5000 employees">1001 to 5000 employees</option>
+          <option value="Unknown">Unknown</option>
+        </select>
+        <br><br>
+        
+        <label for="type_of_ownership">Choose a type of ownership:</label>
+        <select name="type_of_ownership" id="type_of_ownership">
+          <option value="College / University">College / University</option>
+          <option value="Company - Private">Company - Private</option>
+          <option value="Company - Public">Company - Public</option>
+          <option value="Goverment">Goverment</option>
+          <option value="Hospital">Hospital</option>
+          <option value="Nonprofit Organization">Nonprofit Organization</option>
+          <option value="Other Organization">Other Organization</option>
+          <option value="Subsidiary or Business Segment">Subsidiary or Business Segment</option>
+          <option value="Unknown">Unknown</option>
+        </select>
+        <br><br>
+        
+        <label for="industry">Choose a industry:</label>
+        <select name="industry" id="industry">
+          <option value="Accounting">Accounting</option>
+          <option value="Advertising & Marketinng">Advertising & Marketinng</option>
+          <option value="Aerospace & Dedense">Aerospace & Dedense</option>
+          <option value="Architectural & Engineering Services">Architectural & Engineering Services</option>
+          <option value="Auction & Galleries">Auction & Galleries</option>
+          <option value="Banks & Credit Unions">Banks & Credit Unions</option>
+          <option value="Beauty & Personal Accessories Stores">Beauty & Personal Accessories Stores</option>
+          <option value="Biotech & Pharmaceuticals">Biotech & Pharmaceuticals</option>
+          <option value="Brokerage Services">Brokerage Services</option>
+          <option value="Colleges & Universities">Colleges & Universities</option>
+          <option value="Computer Hardware & Software">Computer Hardware & Software</option>
+          <option value="Construction">Construction</option>
+          <option value="Consulting">Consulting</option>
+          <option value="Consumer Product Rental">Consumer Product Rental</option>
+          <option value="Consumer Products Manufacturing">Consumer Products Manufacturing</option>
+          <option value="Department, Clothing, & Shoe Stores">Department, Clothing, & Shoe Stores</option>
+          <option value="Education Training Services">Education Training Services</option>
+          <option value="Energy">Energy</option>   
+          <option value="Enterprise Software & Network Solutions">Enterprise Software & Network Solutions</option>     
+          <option value="Farm Support Services">FarmSupport Services</option>
+          <option value="Federal Agencies">Federal Agencies</option>
+          <option value="Financial Analytics & Research">Financial Analytics & Research</option> 
+          <option value="Financial Transaction Processing">Financial Transaction Processing</option>   
+          <option value="Food & Beverage Manufacturing">Food & Beverage Manufacturing</option>   
+          <option value="Gambling">Gambling</option>   
+          <option value="Gas Stations">Gas Stations</option>    
+          <option value="IT Services">IT Services</option>   
+          <option value="Health Care Services & Hospitals">Health Care Services & Hospitals</option>
+          <option value="Security Services">Security Services</option>
+          <option value="-1">Unknown</option>
+        </select>
+        <br><br>
+        
+        <label for="sector">Choose a sector:</label>
+        <select name="sector" id="sector">
+          <option value="Information Technology">Information Technology</option>
+          <option value="Insurance">Insurance</option>
+          <option value="Finance">Finance</option>
+          <option value="Education">Education</option>
+          <option value="Transportation & Logistics">Transportation & Logistics</option>
+          <option value="Mining & Metals">Mining & Metals</option>
+          <option value="Real Estate">Real Estate</option>
+          <option value="Aerospace & Dedense">Aerospace & Dedense</option>
+          <option value="Energy">Energy</option>
+          <option value="Retail">Retail</option>
+          <option value="Media">Media</option>
+          <option value="Manufacturing">Manufacturing</option>
+          <option value="Travel & Tourism">Travel & Tourism</option>
+          <option value="Health Care">Health Care</option>
+          <option value="Non-Profit">Non-Profit</option>
+          <option value="Business Services">Business Services</option>
+          <option value="Arts, Entertainment & Recreation">Arts, Entertainment & Recreation</option>
+          <option value="-1">Unknown</option>
+        </select>
+        <br><br>
+        
+        <label for="revenue">Choose a revenue:</label>
+        <select name="revenue" id="revenue">
+          <option value="Less than $1 million (USD)">Less than $1 million (USD)</option>
+          <option value="$10 to $25 million (USD)">$10 to $25 million (USD)</option>
+          <option value="$25 to $50 million (USD)">$25 to $50 million (USD)</option>
+          <option value="$50 to $100 million (USD)">$50 to $100 million (USD)</option>
+          <option value="$100 to $500 million (USD)">$100 to $500 million (USD)</option>
+          <option value="$500 million to $1 billion (USD)">$500 million to $1 billion (USD)</option>
+          <option value="$1 to $2 billion (USD)">$1 to $2 billion (USD)</option>
+          <option value="$2 to $5 billion (USD)">$2 to $5 billion (USD)</option>
+          <option value="$5 to $10 billion (USD)">$5 to $10 billion (USD)</option>
+          <option value="$10+ billion (USD)">$10+ billion (USD)</option>
+          <option value="Unknown / Non-Applicable">Unknown / Non-Applicable</option>
+        </select>
+        <br><br>
+        
+        <label for="competition">Number of competition:</label>
+        <input type="text" name="competition" placeholder="competition" required="required" />
+        <br><br>
+        
+        <label for="hourly">hourly salary or not:</label>
+        <select name="hourly" id="hourly">
+          <option value="0">0</option>
+          <option value="1">1</option>
+        </select>
+        <br><br>
+        
+        <label for="employer_provided">employer provided or not:</label>
+        <select name="employer_provided" id="employer_provided">
+          <option value="0">0</option>
+          <option value="1">1</option>
+        </select>
+        <br><br>
+        
+        <label for="age">age of company:</label>
+		<input type="text" name="age" placeholder="age" required="required" />
+		<br><br>
+
+        <label for="python">python required or not:</label>
+        <select name="python" id="python">
+          <option value="0">0</option>
+          <option value="1">1</option>
+        </select>
+        <br><br>
+        
+        <label for="r_studio">r studio required or not:</label>
+        <select name="r_studio" id="r_studio">
+          <option value="0">0</option>
+          <option value="1">1</option>
+        </select>
+        <br><br>
+        
+        <label for="spark">spark required or not:</label>
+        <select name="spark" id="spark">
+          <option value="0">0</option>
+          <option value="1">1</option>
+        </select>
+        <br><br>
+        
+        <label for="aws">aws required or not:</label>
+        <select name="aws" id="aws">
+          <option value="0">0</option>
+          <option value="1">1</option>
+        </select>
+        <br><br>
+        
+        <label for="excel">excel required or not:</label>
+        <select name="excel" id="excel">
+          <option value="0">0</option>
+          <option value="1">1</option>
+        </select>
+        <br><br>
+        
+        <label for="title">Choose a title:</label>
+        <select name="title" id="title">
+          <option value="data scientist">data scientist</option>
+          <option value="data analyst">data analyst</option>
+          <option value="data engineer">data engineer</option>
+          <option value="director">director</option>
+          <option value="manager">manager</option>
+          <option value="mle">machine learning</option>
+          <option value="na">Unknown</option>
+        </select>
+        <br><br>
+        
+        <label for="seniority">Choose a type of seniority:</label>
+        <select name="seniority" id="seniority">
+          <option value="senior">senior</option>
+          <option value="jr">junior</option>
+          <option value="na">Unknown</option>
+        </select>
+        <br><br>
+        
+        <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+    </form>
+
+   <br><br>
+   {{ prediction_text }}
+
+ </div>
+
+
+</body>
+</html>
