@@ -5,11 +5,11 @@
 * Build a client facing API using Flask.
 
 ## Code and Resources Used
-**Python Version:** 3.8
-**Packages:** pandas, numpy, sklearn, matplotlib, seaborn, flask, json, pickle.
-**For Web Framework Requirements:** '''pip install -r requirements.txt'''
-**Glassdoor dataset:** https://github.com/PlayingNumbers/ds_salary_proj
-**Productionization:** https://towardsdatascience.com/productionize-a-machine-learning-model-with-flask-and-heroku-8201260503d2
+**Python Version:** 3.8  
+**Packages:** pandas, numpy, sklearn, matplotlib, seaborn, flask, json, pickle.  
+**For Web Framework Requirements:** '''pip install -r requirements.txt'''  
+**Glassdoor dataset:** https://github.com/PlayingNumbers/ds_salary_proj  
+**Productionization:** https://towardsdatascience.com/productionize-a-machine-learning-model-with-flask-and-heroku-8201260503d2  
 
 ## Glassdoor Dataset 
 1000 job postings from Glassdoor.com in github repo (above). With each jobs, we got the following:
@@ -46,7 +46,28 @@ After take off the dataset, i needed to clean it up so that it was unable for ou
 * Column for simplified job title and seniority
 * Column for description length 
 
-## EDA variable
+## EDA 
 I look at the distributions of the data and the value counts for the various categorical variables. Below are a few highlights from the pivot table.
+
+![alt text](https://github.com/NguyenThai1705/ds_salary_proj/blob/main/correlations.png "Correlations")
+![alt text](https://github.com/NguyenThai1705/ds_salary_proj/blob/main/job_opportunities_by_states.png "jov opportunities by states")
+
+## Model building
+
+First, I transformed the categorical variables into dummies variables. I also splited data into train and test datasets with a test size of 20%.
+I tried three different models and evaluated them using Mean Absolute Error. Each models by following:
+* **Multiple Linear Regression** - Baseline for the model
+* **Lasso Regression** - Because of the sparse data from many categorical variables
+* **Random Forest** - Because the sparsity associated with the data, then I used GridsearchCV to find the best parameters of the model.
+
+## Model performance
+The Random Forest model far outperformed the other approaches on the test and validation sets.
+* **Random Forest** : MAE = 13.12
+* **Linear Regression** : MAE = 21.55
+* **Lasso Regression** : MAE = 20.59
+
+## Productionization
+I built a flask API endpoint that was hosted a local webserver. The API endpoint takes in a request with a list of values from a job listing and returns an estimated salary.
+
 
 
