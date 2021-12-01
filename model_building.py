@@ -16,16 +16,31 @@ df.columns
 df.shape
 df_model = df[['Rating', 'Size', 'Type of ownership', 'Industry', 'Sector', 'Revenue', 'comp_count', 'per_hour',
             'employer_provided', 'age', 'python', 'r_studio', 'spark', 'aws', 'excel', 'title_simp', 'seniority',
-            'avg_salary']]
+            'same_location', 'job_state', 'avg_salary']]
 
-#get dummy data
-df_dum = pd.get_dummies(df_model)
+#get OneHotEncoder data
+# Create a categorical boolean mask
+categorical_feature_mask = df_model.dtypes == object
+# Filter out the categorical columns into a list for easy reference later on in case you have more than a couple categorical columns
+categorical_cols = df_model.columns[categorical_feature_mask].tolist()
+
+# Instantiate the OneHotEncoder Object
+from sklearn.preprocessing import OneHotEncoder
+ohe = OneHotEncoder(handle_unknown='ignore', sparse = False)
+# Apply ohe on data
+ohe.fit(df_model[categorical_cols])
+cat_ohe = ohe.transform(df_model[categorical_cols])
+
+#Create a Pandas DataFrame of the hot encoded column
+ohe_df = pd.DataFrame(cat_ohe, columns = ohe.get_feature_names(input_features = categorical_cols))
+#concat with original data and drop original columns
+df_ohe = pd.concat([df_model, ohe_df], axis=1).drop(columns = categorical_cols, axis=1)
 
 #train test split
 from sklearn.model_selection import train_test_split
 
-X = df_dum.drop('avg_salary', axis=1)
-y = df_dum.avg_salary.values
+X = df_ohe.drop('avg_salary', axis=1)
+y = df_ohe.avg_salary.values
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
@@ -60,7 +75,7 @@ err = tuple(zip(alpha, error))
 df_err = pd.DataFrame(err, columns=['alpha', 'error'])
 df_err[df_err.error == max(df_err.error)]
 
-lm_l = Lasso(alpha=0.18)
+lm_l = Lasso(alpha=0.07)
 lm_l.fit(X_train, y_train)
 np.mean(cross_val_score(lm_l, X_train, y_train, scoring='neg_mean_absolute_error', cv=3))
 
@@ -105,16 +120,23 @@ with open(file_name, 'rb') as pickled:
     model = data['model']
 
 model.predict(X_test.iloc[1,:].values.reshape(1, -1))
-X_test.iloc[1,:].values
+list(X_test.iloc[1,:].values)
 
 
-#how to convert new data to data dummies
+#how to convert new data to OneHotEncoder Data
 columns_model = df_model.columns.drop('avg_salary')
-newdata = [[3.8,'501 to 1000 employees','Company - Private','Aerospace & Defense',
-            'Aerospace & Defense','$50 to $100 million (USD)',0,0,0,48,1,0,0,0,1,'data scientist','na']]
+newdata = [[3.6,'1001 to 5000 employees','Company - Private','Gambling',
+            'Arts, Entertainment & Recreation','$100 to $500 million (USD)',0,0,0,35,0,0,0,0,1,'data analyst','jr',1,'CA']]
 
 newdf = pd.DataFrame(newdata, columns=columns_model)
-newdf = newdf.reindex(labels = df_dum.columns, axis = 1, fill_value = 0).drop(columns='avg_salary')
 
-model.predict(newdf.values)
+# Apply ohe on newdf
+cat_ohe_new = ohe.transform(newdf[categorical_cols])
+#Create a Pandas DataFrame of the hot encoded column
+ohe_df_new = pd.DataFrame(cat_ohe_new, columns = ohe.get_feature_names(input_features = categorical_cols))
+#concat with original data and drop original columns
+df_ohe_new = pd.concat([newdf, ohe_df_new], axis=1).drop(columns = categorical_cols, axis=1)
 
+# predict on df_ohe_new
+predict = model.predict(df_ohe_new.values)
+predict
